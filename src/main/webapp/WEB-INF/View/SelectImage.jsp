@@ -7,6 +7,15 @@ pageEncoding="UTF-8"%>
 <body>
 <form:form action="UploadImage" method="POST" enctype="multipart/form-data">
 <div align="center">
+
+<p>
+<div align="right">
+<form action="logout" method="post">
+    <input type="submit" value="Logout" />
+</form>
+</div>
+</p>
+
 <p>
 <h3> Hello, ${userName}</h3>
 <p>

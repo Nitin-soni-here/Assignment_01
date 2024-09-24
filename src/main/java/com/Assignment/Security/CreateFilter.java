@@ -37,7 +37,7 @@ public class CreateFilter extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic()
                 .and()
-                .logout();
+                .logout().logoutUrl("/home/logout");
 
     }
 }

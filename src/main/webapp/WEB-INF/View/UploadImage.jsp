@@ -6,6 +6,15 @@
 <!DOCTYPE html>
 <html>
 <body>
+
+<p>
+<div align="right">
+<form action="logout" method="post">
+    <input type="submit" value="Logout" />
+</form>
+</div>
+</p>
+${pdf}
 <img src="${pageContext.request.contextPath}/Image/${fileUpload}" height="500" width="1000">
 <form action="Comment" method="post" modelAttribute="commentsDTO">
 <h4 style="color:blue;">Enter Your Comment ${username}:</h4>

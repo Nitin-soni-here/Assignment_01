@@ -1,5 +1,14 @@
 <html>
 <body>
+
+<p>
+<div align="right">
+<form action="logout" method="post">
+    <input type="submit" value="Logout" />
+</form>
+</div>
+</p>
+
 <form action="ShowComments" method="POST" modelAttribute="commentsDTO">
 <div align="center">
 <h2> Hello ${username}</h2>
