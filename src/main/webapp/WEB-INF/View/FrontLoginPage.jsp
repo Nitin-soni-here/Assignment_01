@@ -12,6 +12,28 @@ position:fixed;
 text-align: left;
 margin-left:30px;}
 </style>
+<style>
+body{
+background-color:white;
+}
+input{
+background-color:brown;
+color:white;
+}
+label{
+color:black;
+font-family:arial;
+}
+a{
+text-decoration:none;
+}
+h3{
+font-weight:normal;
+text-decoration: underline
+}
+
+
+</style>
 </head>
 <body>
 
@@ -32,7 +54,7 @@ margin-left:30px;}
 
 <form:form method="POST" >
 <div align="center">
-<h3> Login Here...!!</h3>
+<h3 style="text-decoration:double underline;"> Login Here...!!</h3>
 <p>
 <label for="ei"> Username: </label>
 <input type="text" id="ei" name="username" placeholder="Enter Username"/>
@@ -48,5 +70,6 @@ margin-left:30px;}
 </p>
 </div>
 </form:form>
-<html>
+
 </body>
+</html>

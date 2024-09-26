@@ -1,8 +1,6 @@
 package com.Assignment;
 
 import com.Assignment.DAO.LoginDAO;
-import com.itextpdf.text.pdf.PdfDocument;
-import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -14,19 +12,22 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
 @Controller
-@SessionAttributes("loginDTO")
+@SessionAttributes({"loginDTO","parts"})
 public class WebApplication {
+    @Autowired
+    private UtilityMethods utilityMethods;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -42,56 +43,27 @@ public class WebApplication {
     public String SelectImage(Principal principal,Model model){
         String UserName=principal.getName();
         model.addAttribute("loginDTO",new LoginDTO());
+        model.addAttribute("parts",new CommonMultiParts());
         model.addAttribute("userName",UserName.toUpperCase());
         return "SelectImage";
     }
-    @RequestMapping(value = "/UploadImage" ,method = RequestMethod.POST)
-    public String UploadImage(@SessionAttribute("loginDTO")LoginDTO loginDTO,@RequestParam("profile")
-    CommonsMultipartFile file, HttpSession session, Model model,Principal principal)  {
-
+    @RequestMapping(value = "/UploadImage")
+    public String UploadImage(@SessionAttribute("loginDTO")LoginDTO loginDTO,@ModelAttribute("parts")CommonMultiParts parts
+    , HttpSession session, Model model,Principal principal)
+    {
+       // String file=parts.getProfile();
         model.addAttribute("username",principal.getName().toUpperCase());
-        byte[] data=file.getBytes();
-        String path = session.getServletContext().getRealPath("/")+"Image"+File.separator+file.getOriginalFilename();
+      // byte[] data=file.getBytes();
+        String path = session.getServletContext().getRealPath("/")+"Image"+File.separator+parts.getProfile();
         System.out.println(path);
 
-        try{
-            FileOutputStream fos=new FileOutputStream(path);
-            fos.write(data);
-            fos.close();
+//            FileOutputStream fos=new FileOutputStream(path);
+//            fos.write(data);
+//            fos.close();
             //model.addAttribute("fileUpload",file.getOriginalFilename());
-                                           //Read File
-              PDDocument document=PDDocument.load(new File("C:/Users/Pericent/IdeaProjects/Assignment/src/main/webapp/Image/"+file.getOriginalFilename()));
-              PDFTextStripper text=new PDFTextStripper();
-              String pdf= text.getText(document);
-              model.addAttribute("pdf",pdf);
-              System.out.println(pdf);
-                                           //write file
-            PDDocument document1=new PDDocument();
-            PDPage pdPage=new PDPage();
-            document1.addPage(pdPage);
-            PDPageContentStream contentStream=new PDPageContentStream(document1,pdPage);
-            contentStream.beginText();
-            contentStream.newLineAtOffset(100,700);
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD,12);
-           // contentStream.showText();
-            contentStream.endText();
-            contentStream.close();
-            document1.save("D:/pdf/new2pdf.pdf");
-                                            //Merge file
-            File file1=new File("C:/Users/Pericent/IdeaProjects/Assignment/src/main/webapp/Image/new.pdf");
-            File file2=new File("D:/pdf/new2pdf.pdf");
-            PDFMergerUtility pdfMergerUtility=new PDFMergerUtility();
-            pdfMergerUtility.setDestinationFileName("D:/MergePdf/newMerge.pdf");
-            pdfMergerUtility.addSource(file1);
-            pdfMergerUtility.addSource(file2);
-            pdfMergerUtility.mergeDocuments();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("error");
-        }
         return "UploadImage";
     }
+
     @RequestMapping("/Comment")
     public String Comment(@SessionAttribute("loginDTO") LoginDTO loginDTO
             ,Principal principal,@ModelAttribute("commentsDTO") CommentsDTO commentsDTO,Model model){
@@ -99,7 +71,11 @@ public class WebApplication {
         loginDao.InsertComments(commentsDTO,principal);
         return "Comment";
     }
-
+    @RequestMapping("/Save")
+    public String Save()
+    {
+        return"redirect:/home/UploadImage";
+    }
     @RequestMapping("/ShowComments")
     public String ShowComments(Principal principal,Model model){
         List<CommentsDTO> commentsDTOS=loginDao.fetch(principal);
@@ -109,6 +85,56 @@ public class WebApplication {
 
         return "ShowComments";
     }
+    @RequestMapping("/AddNoteSheet")
+    public String AddNoteSheet(@SessionAttribute("parts")CommonMultiParts parts,Principal principal,CommentsDTO commentsDTO){
+       // System.out.println("file:"+parts.getProfile());
+        List<CommentsDTO> commentsDTOS=loginDao.fetch(principal);
+        String comment= utilityMethods.PrintComments(commentsDTOS);
+
+        //System.out.println("principal:"+principal.getName());
+
+        try {
+            //Read File
+            PDDocument document = PDDocument.load(new File("C:/Users/Pericent/IdeaProjects/Assignment/src/main/webapp/Image/" + parts.getProfile()));
+            PDFTextStripper text = new PDFTextStripper();
+            String pdf = text.getText(document);
+            // model.addAttribute("pdf", pdf);
+            // System.out.println(pdf);
+
+            //write file
+            PDDocument document1 = new PDDocument();
+            PDPage pdPage = new PDPage();
+            document1.addPage(pdPage);
+            PDPageContentStream contentStream = new PDPageContentStream(document1, pdPage);
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+            contentStream.setLeading(15f);
+            contentStream.newLineAtOffset(25, 700);
+            for (CommentsDTO commentsDTO1 : commentsDTOS)
+            {
+                contentStream.showText(commentsDTO1.getComment());
+            contentStream.newLine();
+            }
+                contentStream.endText();
+                contentStream.close();
+
+            document1.save("D:/Write/write.pdf");
+            //Merge file
+            File file1 = new File("C:/Users/Pericent/IdeaProjects/Assignment/src/main/webapp/Image/" + parts.getProfile());
+            File file2 = new File("D:/Write/write.pdf");
+            PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
+            pdfMergerUtility.setDestinationFileName("D:/Merge/merge.pdf");
+            pdfMergerUtility.addSource(file1);
+            pdfMergerUtility.addSource(file2);
+            pdfMergerUtility.mergeDocuments();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("error");
+        }
+        return "AddNoteSheet";
+    }
+
     @RequestMapping("/Registration")
     public String Registration(@ModelAttribute("registrationDTO") RegistrationDTO registrationDTO){
         return "Registration";
@@ -121,28 +147,3 @@ public class WebApplication {
         return "redirect:/home/login";
     }
 }
-
-//        try{
-////C:/Users/Pericent/IdeaProjects/Assignment/src/main/webapp/Image/Nancy Resume.pdf
-////Read File
-//PDDocument document=PDDocument.load("C:/Users/Pericent/IdeaProjects/Assignment/src/main/webapp/Image/"+file.getOriginalFilename());
-//PDFTextStripper text=new PDFTextStripper();
-//String pdf= text.getText(document);
-
-//write file
-
-//            PDDocument document1=new PDDocument();
-//            PDPage pdPage=new PDPage();
-//            document1.addPage(pdPage);
-//            PDPageContentStream contentStream=new PDPageContentStream(document1,pdPage);
-//            contentStream.beginText();
-//            contentStream.newLineAtOffset(100,700);
-//            contentStream.setFont(PDType1Font.HELVETICA_BOLD,12);
-//            contentStream.showText("hello,pdf");
-//            contentStream.endText();
-//FileOutputStream fos=new FileOutputStream(path);
-//            fos.write(data);
-//            fos.close();
-//            model.addAttribute("fileUpload",file.getOriginalFilename());
-//        model.addAttribute("pdf",pdf);
-//            System.out.println(pdf);

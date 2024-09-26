@@ -35,7 +35,7 @@ public class LoginDaoImpl implements LoginDAO{
     @Override
     public void InsertComments(@SessionAttribute("loginDTO") CommentsDTO commentsDTO,Principal principal) {
         String username=principal.getName();
-        System.out.println("comment"+username);
+       // System.out.println("comment"+username);
         String sql="Insert into commentsdto values(?,?,?)";
         Object args[]={commentsDTO.getId(),principal.getName(),commentsDTO.getComment()};
         jdbcTemplate.update(sql,args);
@@ -48,4 +48,5 @@ public class LoginDaoImpl implements LoginDAO{
         //System.out.println(stu);
         return stu;
     }
+
 }

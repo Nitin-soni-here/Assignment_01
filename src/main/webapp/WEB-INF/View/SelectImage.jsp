@@ -5,9 +5,6 @@ pageEncoding="UTF-8"%>
 
 <html>
 <body>
-<form:form action="UploadImage" method="POST" enctype="multipart/form-data">
-<div align="center">
-
 <p>
 <div align="right">
 <form action="logout" method="post">
@@ -16,12 +13,16 @@ pageEncoding="UTF-8"%>
 </div>
 </p>
 
+
+<form:form action="UploadImage" method="POST" modelAttribute="parts" >
+<div align="center">
+
 <p>
 <h3> Hello, ${userName}</h3>
 <p>
 <label for="f"> File Upload Here...!!</label>
 </p>
-<input type="file" id="f" name="profile" />
+<form:input type="file" id="f" path="profile" />
 <p>
 <input type="submit" value="submit"/>
 </p>

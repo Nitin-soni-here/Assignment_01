@@ -16,9 +16,14 @@
 <h1> Comment Section</h1>
 </p>
 <c:forEach var="Comment" items="${commentsDTOS}">
-${username}:${Comment}
+${Comment}
 <br/>
 </c:forEach>
+<div align="center">
+<form action="AddNoteSheet" method="POST">
+<input type="submit" value="Add Note Sheet"/>
+</form>
+</div>
 </div>
 </body>
 </html>
