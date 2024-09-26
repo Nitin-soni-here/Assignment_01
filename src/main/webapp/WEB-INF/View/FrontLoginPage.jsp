@@ -12,28 +12,56 @@ position:fixed;
 text-align: left;
 margin-left:30px;}
 </style>
+
+
 <style>
-body{
-background-color:white;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff6f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
-input{
-background-color:brown;
-color:white;
+.login-container {
+    background: white;
+    padding: 50px;
+    border-radius: 50px;
+    box-shadow: 0 0 50px rgba(6, 1, 5, 0.3);
 }
-label{
-color:black;
-font-family:arial;
+
+.input-group {
+    margin-bottom: 15px;
 }
-a{
-text-decoration:none;
+
+label {
+    display: block;
+    margin-bottom: 10px;
 }
-h3{
-font-weight:normal;
-text-decoration: underline
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 5px solid #ccc;
+    border-radius: 4px;
 }
+button {
+    width: 50%;
+    padding: 10px;
+    background-color: #007bff;
+    border: 5px solid #ccc;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 
 
 </style>
+
+
+
 </head>
 <body>
 
@@ -52,21 +80,29 @@ text-decoration: underline
 <a href="/Assignment/home/Registration"><h3>Registration</h3></a>
 </div>
 
+
 <form:form method="POST" >
-<div align="center">
+<div class="login-container" align="center">
 <h3 style="text-decoration:double underline;"> Login Here...!!</h3>
+
+<div class="input-group">
 <p>
 <label for="ei"> Username: </label>
-<input type="text" id="ei" name="username" placeholder="Enter Username"/>
+<input type="text" id="ei" name="username" placeholder="Enter Username" required>
 <form:errors path="username" cssClass="errors"/>
 </p>
+</div>
+
+<div class="input-group">
 <p>
 <label for="p">Password :</label>
 <input type="password" id="p" name="password" placeholder="Enter Password"/>
 <form:errors path="password" cssClass="errors"/>
 </p>
+</div>
+
 <p>
-<input type="submit" value="Login"/>
+<button type="submit">Login</button>
 </p>
 </div>
 </form:form>
